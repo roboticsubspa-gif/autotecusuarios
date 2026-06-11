@@ -19,6 +19,8 @@ export const NuevoReporte = () => {
   const [loading, setLoading] = useState(false);
   const [searchOT, setSearchOT] = useState('');
   const [searchInsumo, setSearchInsumo] = useState('');
+  const [showOTDropdown, setShowOTDropdown] = useState(false);
+  const [showInsumoDropdown, setShowInsumoDropdown] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,31 +53,6 @@ export const NuevoReporte = () => {
     fetchData();
   }, []);
 
-  const handleAddInsumo = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const item = inventario.find(i => i.id === e.target.value);
-    if (item) {
-      const existe = insumosUsados.some(ins => ins.inventario_id === item.id);
-      if (existe) {
-        alert('Este insumo ya ha sido agregado. Modifique la cantidad directamente en la lista.');
-        e.target.value = '';
-        return;
-      }
-
-      if (item.stock < 1) {
-        alert(`No hay stock disponible para ${item.nombre}.`);
-        e.target.value = '';
-        return;
-      }
-
-      setInsumosUsados([...insumosUsados, {
-        inventario_id: item.id,
-        cantidad: 1,
-        precio_unitario: item.precio_venta,
-        nombre: item.nombre
-      }]);
-    }
-    e.target.value = ''; // reset select
-  };
 
   const removeInsumo = (index: number) => {
     const newInsumos = [...insumosUsados];
@@ -216,31 +193,49 @@ export const NuevoReporte = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-1">Orden de Trabajo Asociada</label>
-              <div className="space-y-2">
+              <div className="relative">
                 <input 
                   type="text" 
-                  placeholder="Buscar OT por Nº o patente..." 
+                  placeholder="Buscar y seleccionar OT por Nº o patente..." 
                   value={searchOT}
-                  onChange={e => setSearchOT(e.target.value)}
-                  className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                  onChange={e => {
+                    setSearchOT(e.target.value);
+                    setShowOTDropdown(true);
+                  }}
+                  onFocus={() => setShowOTDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowOTDropdown(false), 200)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
                 />
-                <select 
-                  required
-                  value={formData.orden_id} 
-                  onChange={e => setFormData({...formData, orden_id: e.target.value})} 
-                  className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="" disabled>Seleccione una OT Activa</option>
-                  {ordenes
-                    .filter(o => 
+                {showOTDropdown && (
+                  <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {ordenes
+                      .filter(o => 
+                        `ot-${o.numero_secuencial}`.includes(searchOT.toLowerCase()) || 
+                        o.numero_secuencial?.toString().includes(searchOT) || 
+                        o.vehiculos?.patente?.toLowerCase().includes(searchOT.toLowerCase())
+                      )
+                      .map(o => (
+                        <div 
+                          key={o.id}
+                          onClick={() => {
+                            setFormData({...formData, orden_id: o.id});
+                            setSearchOT(`OT-${o.numero_secuencial} / ${o.vehiculos?.patente.toUpperCase()}`);
+                            setShowOTDropdown(false);
+                          }}
+                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                        >
+                          OT-{o.numero_secuencial} / {o.vehiculos?.patente.toUpperCase()}
+                        </div>
+                      ))}
+                    {ordenes.filter(o => 
                       `ot-${o.numero_secuencial}`.includes(searchOT.toLowerCase()) || 
                       o.numero_secuencial?.toString().includes(searchOT) || 
                       o.vehiculos?.patente?.toLowerCase().includes(searchOT.toLowerCase())
-                    )
-                    .map(o => (
-                      <option key={o.id} value={o.id}>OT-{o.numero_secuencial} / {o.vehiculos?.patente.toUpperCase()}</option>
-                    ))}
-                </select>
+                    ).length === 0 && (
+                      <div className="px-3 py-2 text-muted-foreground text-sm">No se encontraron resultados</div>
+                    )}
+                  </div>
+                )}
               </div>
               {dbError && (
                 <p className="text-red-500 text-xs mt-2 font-medium">Error de base de datos: {dbError}</p>
@@ -277,29 +272,62 @@ export const NuevoReporte = () => {
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-border pb-2 gap-3">
             <h2 className="text-lg font-semibold">Insumos y Repuestos Utilizados</h2>
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="relative w-full md:w-80">
               <input 
                 type="text" 
-                placeholder="Buscar insumo..." 
+                placeholder="Buscar y agregar insumo..." 
                 value={searchInsumo}
-                onChange={e => setSearchInsumo(e.target.value)}
-                className="px-3 py-1 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                onChange={e => {
+                  setSearchInsumo(e.target.value);
+                  setShowInsumoDropdown(true);
+                }}
+                onFocus={() => setShowInsumoDropdown(true)}
+                onBlur={() => setTimeout(() => setShowInsumoDropdown(false), 200)}
+                className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
               />
-              <select 
-                onChange={handleAddInsumo}
-                className="px-3 py-1.5 text-sm bg-primary/10 text-primary border border-primary/20 rounded-md focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
-                defaultValue=""
-              >
-                <option value="" disabled>+ Agregar Insumo</option>
-                {inventario
-                  .filter(i => 
+              {showInsumoDropdown && (
+                <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {inventario
+                    .filter(i => 
+                      i.nombre.toLowerCase().includes(searchInsumo.toLowerCase()) || 
+                      (i.codigo && i.codigo.toLowerCase().includes(searchInsumo.toLowerCase()))
+                    )
+                    .map(i => (
+                      <div 
+                        key={i.id}
+                        onClick={() => {
+                          const existe = insumosUsados.some(ins => ins.inventario_id === i.id);
+                          if (existe) {
+                            alert('Este insumo ya ha sido agregado. Modifique la cantidad directamente en la lista.');
+                            return;
+                          }
+                          if (i.stock < 1) {
+                            alert(`No hay stock disponible para ${i.nombre}.`);
+                            return;
+                          }
+                          setInsumosUsados([...insumosUsados, {
+                            inventario_id: i.id,
+                            cantidad: 1,
+                            precio_unitario: i.precio_venta,
+                            nombre: i.nombre
+                          }]);
+                          setSearchInsumo('');
+                          setShowInsumoDropdown(false);
+                        }}
+                        className="px-3 py-2 hover:bg-muted cursor-pointer text-sm flex justify-between items-center"
+                      >
+                        <span className="font-medium">{i.nombre}</span>
+                        <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">Stock: {Math.round(i.stock)}</span>
+                      </div>
+                    ))}
+                  {inventario.filter(i => 
                     i.nombre.toLowerCase().includes(searchInsumo.toLowerCase()) || 
                     (i.codigo && i.codigo.toLowerCase().includes(searchInsumo.toLowerCase()))
-                  )
-                  .map(i => (
-                    <option key={i.id} value={i.id}>{i.nombre} (Stock: {Math.round(i.stock)})</option>
-                  ))}
-              </select>
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-muted-foreground text-sm">No se encontraron resultados</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
