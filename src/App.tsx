@@ -52,13 +52,13 @@ function App() {
             <Route path="/" element={<DashboardOrRedirect />} />
             
             <Route path="/clientes" element={
-              <ProtectedRoute allowedRoles={['administrador', 'operario']}><Clientes /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><Clientes /></ProtectedRoute>
             } />
             <Route path="/vehiculos" element={
-              <ProtectedRoute allowedRoles={['administrador', 'operario']}><Vehiculos /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><Vehiculos /></ProtectedRoute>
             } />
             <Route path="/inventario" element={
-              <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><Inventario /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['administrador', 'operario']}><Inventario /></ProtectedRoute>
             } />
             <Route path="/ordenes" element={
               <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><OrdenesTrabajo /></ProtectedRoute>
