@@ -27,11 +27,11 @@ const Sidebar = ({ isOpen, onClose, signOut }: SidebarProps) => {
 
   const links = [
     { name: 'Dashboard', path: '/', icon: Home, roles: ['administrador'] },
-    { name: 'Clientes', path: '/clientes', icon: Users, roles: ['administrador', 'operario'] },
-    { name: 'Vehículos', path: '/vehiculos', icon: Car, roles: ['administrador', 'operario'] },
+    { name: 'Clientes', path: '/clientes', icon: Users, roles: ['administrador', 'operario', 'tecnico'] },
+    { name: 'Vehículos', path: '/vehiculos', icon: Car, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Órdenes de Trabajo', path: '/ordenes', icon: Wrench, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Reportes', path: '/reportes', icon: ClipboardCheck, roles: ['administrador', 'tecnico'] },
-    { name: 'Inventario', path: '/inventario', icon: Package, roles: ['administrador', 'operario', 'tecnico'] },
+    { name: 'Inventario', path: '/inventario', icon: Package, roles: ['administrador', 'operario'] },
     { name: 'Cotizaciones', path: '/cotizaciones', icon: FileText, roles: ['administrador', 'operario'] },
     { name: 'Usuarios', path: '/usuarios', icon: UserCog, roles: ['administrador'] },
   ];
