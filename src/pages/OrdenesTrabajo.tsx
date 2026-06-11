@@ -35,6 +35,7 @@ export const OrdenesTrabajo = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [searchVehiculo, setSearchVehiculo] = useState('');
+  const [showVehiculoDropdown, setShowVehiculoDropdown] = useState(false);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,10 +131,14 @@ export const OrdenesTrabajo = () => {
         descripcion: orden.descripcion,
         observaciones: orden.observaciones || ''
       });
+      const veh = vehiculosList.find(v => v.id === orden.vehiculo_id);
+      if (veh) {
+        setSearchVehiculo(`${veh.patente.toUpperCase()} - ${veh.clientes?.nombre}`);
+      }
     } else {
       setEditingId(null);
       setFormData({ 
-        vehiculo_id: vehiculosList.length > 0 ? vehiculosList[0].id : '', 
+        vehiculo_id: '', 
         estado: 'Abierta', 
         descripcion: '',
         observaciones: ''
@@ -402,32 +407,49 @@ export const OrdenesTrabajo = () => {
               <h2 className="text-xl font-bold">{editingId ? 'Editar Orden' : 'Nueva Orden de Trabajo'}</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium mb-1">Vehículo</label>
-                <div className="space-y-2">
+                <div className="relative">
                   <input 
                     type="text" 
-                    placeholder="Buscar vehículo por patente o cliente..." 
+                    placeholder="Buscar y seleccionar vehículo (patente o cliente)..." 
                     value={searchVehiculo}
-                    onChange={e => setSearchVehiculo(e.target.value)}
-                    className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                    onChange={e => {
+                      setSearchVehiculo(e.target.value);
+                      setShowVehiculoDropdown(true);
+                    }}
+                    onFocus={() => setShowVehiculoDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowVehiculoDropdown(false), 200)}
+                    className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
                   />
-                  <select 
-                    required
-                    value={formData.vehiculo_id} 
-                    onChange={e => setFormData({...formData, vehiculo_id: e.target.value})} 
-                    className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="" disabled>Seleccione un vehículo</option>
-                    {vehiculosList
-                      .filter(v => 
+                  {showVehiculoDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      {vehiculosList
+                        .filter(v => 
+                          v.patente.toLowerCase().includes(searchVehiculo.toLowerCase()) || 
+                          v.clientes?.nombre?.toLowerCase().includes(searchVehiculo.toLowerCase())
+                        )
+                        .map(v => (
+                          <div 
+                            key={v.id}
+                            onClick={() => {
+                              setFormData({...formData, vehiculo_id: v.id});
+                              setSearchVehiculo(`${v.patente.toUpperCase()} - ${v.clientes?.nombre}`);
+                              setShowVehiculoDropdown(false);
+                            }}
+                            className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          >
+                            {v.patente.toUpperCase()} - {v.clientes?.nombre}
+                          </div>
+                        ))}
+                      {vehiculosList.filter(v => 
                         v.patente.toLowerCase().includes(searchVehiculo.toLowerCase()) || 
                         v.clientes?.nombre?.toLowerCase().includes(searchVehiculo.toLowerCase())
-                      )
-                      .map(v => (
-                        <option key={v.id} value={v.id}>{v.patente.toUpperCase()} - {v.clientes?.nombre}</option>
-                      ))}
-                  </select>
+                      ).length === 0 && (
+                        <div className="px-3 py-2 text-muted-foreground text-sm">No se encontraron resultados</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
