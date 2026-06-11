@@ -51,9 +51,9 @@ export const Inventario = () => {
     const dataToSave = {
       codigo: formData.codigo.trim() === '' ? null : formData.codigo.trim(),
       nombre: formData.nombre,
-      stock: parseFloat(formData.stock) || 0,
-      costo_unitario: parseFloat(formData.costo_unitario) || 0,
-      precio_venta: parseFloat(formData.precio_venta) || 0,
+      stock: Math.round(parseFloat(formData.stock)) || 0,
+      costo_unitario: Math.round(parseFloat(formData.costo_unitario)) || 0,
+      precio_venta: Math.round(parseFloat(formData.precio_venta)) || 0,
     };
 
     let error;
@@ -208,17 +208,17 @@ export const Inventario = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Stock</label>
-                  <input required type="number" step="0.01" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input required type="number" step="1" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Costo Unitario</label>
-                  <input required type="number" step="0.01" value={formData.costo_unitario} onChange={e => setFormData({...formData, costo_unitario: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input required type="number" step="1" min="0" value={formData.costo_unitario} onChange={e => setFormData({...formData, costo_unitario: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Precio Venta</label>
-                  <input required type="number" step="0.01" value={formData.precio_venta} onChange={e => setFormData({...formData, precio_venta: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+                  <input required type="number" step="1" min="0" value={formData.precio_venta} onChange={e => setFormData({...formData, precio_venta: e.target.value})} className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               </div>
               
