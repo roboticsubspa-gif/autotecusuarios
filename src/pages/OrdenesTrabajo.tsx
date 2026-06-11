@@ -24,6 +24,7 @@ interface OrdenTrabajo {
   vehiculo_id: string;
   estado: string;
   descripcion: string;
+  observaciones?: string;
   created_at: string;
   vehiculos?: Vehiculo;
 }
@@ -40,7 +41,8 @@ export const OrdenesTrabajo = () => {
   const [formData, setFormData] = useState({ 
     vehiculo_id: '', 
     estado: 'Abierta', 
-    descripcion: '' 
+    descripcion: '',
+    observaciones: ''
   });
 
   // Modal para ver detalles
@@ -123,11 +125,17 @@ export const OrdenesTrabajo = () => {
       setFormData({ 
         vehiculo_id: orden.vehiculo_id, 
         estado: orden.estado, 
-        descripcion: orden.descripcion 
+        descripcion: orden.descripcion,
+        observaciones: orden.observaciones || ''
       });
     } else {
       setEditingId(null);
-      setFormData({ vehiculo_id: vehiculosList.length > 0 ? vehiculosList[0].id : '', estado: 'Abierta', descripcion: '' });
+      setFormData({ 
+        vehiculo_id: vehiculosList.length > 0 ? vehiculosList[0].id : '', 
+        estado: 'Abierta', 
+        descripcion: '',
+        observaciones: ''
+      });
     }
     setIsModalOpen(true);
   };
@@ -348,6 +356,16 @@ export const OrdenesTrabajo = () => {
                   <p className="text-sm leading-relaxed whitespace-pre-line text-foreground">{selectedOrdenForView.descripcion}</p>
                 </div>
               </div>
+
+              {/* Observaciones de Recepción */}
+              {selectedOrdenForView.observaciones && (
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold text-amber-500 uppercase tracking-wide">Observaciones / Detalles Previos</h3>
+                  <div className="bg-amber-500/5 border border-amber-500/20 p-4 rounded-lg max-h-40 overflow-y-auto">
+                    <p className="text-sm leading-relaxed whitespace-pre-line text-foreground/90">{selectedOrdenForView.observaciones}</p>
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-muted/10">
@@ -418,6 +436,16 @@ export const OrdenesTrabajo = () => {
                   onChange={e => setFormData({...formData, descripcion: e.target.value})} 
                   className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none" 
                   placeholder="Detalle el problema o trabajo a realizar..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Observaciones de Recepción (Daños previos, detalles, etc.)</label>
+                <textarea 
+                  rows={3}
+                  value={formData.observaciones} 
+                  onChange={e => setFormData({...formData, observaciones: e.target.value})} 
+                  className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none" 
+                  placeholder="Ej: Rayas en guardabarros izquierdo, falta antena de radio..."
                 />
               </div>
               <div className="pt-4 flex justify-end gap-3">
