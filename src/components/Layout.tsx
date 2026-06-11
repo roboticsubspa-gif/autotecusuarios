@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -33,8 +34,8 @@ const Sidebar = ({ isOpen, onClose, signOut }: SidebarProps) => {
     { name: 'Órdenes de Trabajo', path: '/ordenes', icon: Wrench, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Reportes', path: '/reportes', icon: ClipboardCheck, roles: ['administrador', 'tecnico', 'operario'] },
     { name: 'Inventario', path: '/inventario', icon: Package, roles: ['administrador', 'operario'] },
-    { name: 'Cotizaciones', path: '/cotizaciones', icon: FileText, roles: ['administrador', 'operario'] },
-    { name: 'Buscar Patente', path: '/buscar-patente', icon: Search, roles: ['administrador', 'operario'] },
+    { name: 'Cotizaciones', path: '/cotizaciones', icon: FileText, roles: ['administrador', 'operario', 'tecnico'] },
+    { name: 'Buscar Patente', path: '/buscar-patente', icon: Search, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Usuarios', path: '/usuarios', icon: UserCog, roles: ['administrador'] },
   ];
 
