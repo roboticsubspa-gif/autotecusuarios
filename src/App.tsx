@@ -35,9 +35,6 @@ const DashboardOrRedirect = () => {
   if (profile?.rol === 'tecnico') {
     return <Navigate to="/ordenes" replace />;
   }
-  if (profile?.rol === 'operario') {
-    return <Navigate to="/clientes" replace />;
-  }
   return <Dashboard />;
 };
 
@@ -64,10 +61,10 @@ function App() {
               <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><OrdenesTrabajo /></ProtectedRoute>
             } />
             <Route path="/reportes" element={
-              <ProtectedRoute allowedRoles={['administrador', 'tecnico']}><ReportesTrabajo /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['administrador', 'tecnico', 'operario']}><ReportesTrabajo /></ProtectedRoute>
             } />
             <Route path="/reportes/nuevo" element={
-              <ProtectedRoute allowedRoles={['administrador', 'tecnico']}><NuevoReporte /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['administrador', 'tecnico', 'operario']}><NuevoReporte /></ProtectedRoute>
             } />
             <Route path="/cotizaciones" element={
               <ProtectedRoute allowedRoles={['administrador', 'operario']}><Cotizaciones /></ProtectedRoute>
@@ -83,3 +80,4 @@ function App() {
 }
 
 export default App;
+
