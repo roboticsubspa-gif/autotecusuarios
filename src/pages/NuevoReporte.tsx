@@ -52,6 +52,19 @@ export const NuevoReporte = () => {
   const handleAddInsumo = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const item = inventario.find(i => i.id === e.target.value);
     if (item) {
+      const existe = insumosUsados.some(ins => ins.inventario_id === item.id);
+      if (existe) {
+        alert('Este insumo ya ha sido agregado. Modifique la cantidad directamente en la lista.');
+        e.target.value = '';
+        return;
+      }
+
+      if (item.stock < 1) {
+        alert(`No hay stock disponible para ${item.nombre}.`);
+        e.target.value = '';
+        return;
+      }
+
       setInsumosUsados([...insumosUsados, {
         inventario_id: item.id,
         cantidad: 1,
@@ -70,6 +83,23 @@ export const NuevoReporte = () => {
 
   const updateInsumo = (index: number, field: string, value: number) => {
     const newInsumos = [...insumosUsados];
+    const insumo = newInsumos[index];
+    
+    if (field === 'cantidad') {
+      const item = inventario.find(i => i.id === insumo.inventario_id);
+      if (item && value > item.stock) {
+        alert(`Stock insuficiente. Solo quedan ${item.stock} unidades de "${item.nombre}".`);
+        (newInsumos[index] as any).cantidad = item.stock;
+        setInsumosUsados(newInsumos);
+        return;
+      }
+      if (value < 0.1) {
+        (newInsumos[index] as any).cantidad = 0.1;
+        setInsumosUsados(newInsumos);
+        return;
+      }
+    }
+
     (newInsumos[index] as any)[field] = value;
     setInsumosUsados(newInsumos);
   };
@@ -79,6 +109,19 @@ export const NuevoReporte = () => {
     if (!formData.orden_id) {
       alert('Debe seleccionar una Orden de Trabajo.');
       return;
+    }
+
+    // Validar stock antes de enviar
+    for (const insumo of insumosUsados) {
+      const item = inventario.find(i => i.id === insumo.inventario_id);
+      if (!item) {
+        alert(`El insumo "${insumo.nombre}" ya no existe en el catálogo.`);
+        return;
+      }
+      if (insumo.cantidad > item.stock) {
+        alert(`Stock insuficiente para "${insumo.nombre}". Disponible: ${item.stock}, Solicitado: ${insumo.cantidad}`);
+        return;
+      }
     }
 
     try {
@@ -232,10 +275,13 @@ export const NuevoReporte = () => {
               {insumosUsados.map((insumo, idx) => (
                 <div key={idx} className="flex flex-wrap md:flex-nowrap items-center gap-4 bg-muted/30 p-3 rounded-lg border border-border">
                   <div className="flex-1 font-medium">{insumo.nombre}</div>
-                  <div className="w-24">
-                    <label className="text-xs text-muted-foreground block mb-1">Cant.</label>
+                  <div className="w-28">
+                    <label className="text-xs text-muted-foreground block mb-1">
+                      Cant. (Máx {inventario.find(i => i.id === insumo.inventario_id)?.stock || 0})
+                    </label>
                     <input 
-                      type="number" min="1" step="0.5"
+                      type="number" min="0.1" step="0.5"
+                      max={inventario.find(i => i.id === insumo.inventario_id)?.stock || 1}
                       value={insumo.cantidad}
                       onChange={e => updateInsumo(idx, 'cantidad', Number(e.target.value))}
                       className="w-full px-2 py-1 bg-background border border-border rounded focus:outline-none"
