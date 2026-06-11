@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, Edit2, Trash2, Search, Car } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Cliente {
   id: string;
@@ -18,6 +19,7 @@ interface Vehiculo {
 }
 
 export const Vehiculos = () => {
+  const { profile } = useAuth();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [clientesList, setClientesList] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,28 @@ export const Vehiculos = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.cliente_id) {
+      alert('El cliente propietario es obligatorio.');
+      return;
+    }
+    if (!formData.patente.trim()) {
+      alert('La patente es obligatoria.');
+      return;
+    }
+    if (!formData.marca.trim()) {
+      alert('La marca es obligatoria.');
+      return;
+    }
+    if (!formData.modelo.trim()) {
+      alert('El modelo es obligatorio.');
+      return;
+    }
+    if (!formData.anio.trim()) {
+      alert('El año es obligatorio.');
+      return;
+    }
+
     const dataToSave = {
       ...formData,
       anio: parseInt(formData.anio) || new Date().getFullYear()
@@ -146,7 +170,7 @@ export const Vehiculos = () => {
                 <th className="px-6 py-4 font-semibold">Marca</th>
                 <th className="px-6 py-4 font-semibold">Modelo</th>
                 <th className="px-6 py-4 font-semibold">Año</th>
-                <th className="px-6 py-4 font-semibold text-right">Acciones</th>
+                {profile?.rol !== 'tecnico' && <th className="px-6 py-4 font-semibold text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -162,20 +186,22 @@ export const Vehiculos = () => {
                     <td className="px-6 py-4">{vehiculo.marca}</td>
                     <td className="px-6 py-4">{vehiculo.modelo}</td>
                     <td className="px-6 py-4 text-muted-foreground">{vehiculo.anio}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <button 
-                        onClick={() => openModal(vehiculo)}
-                        className="text-blue-500 hover:text-blue-400 p-2 hover:bg-blue-500/10 rounded-md transition-colors"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(vehiculo.id)}
-                        className="text-destructive hover:text-destructive/80 p-2 hover:bg-destructive/10 rounded-md transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
+                    {profile?.rol !== 'tecnico' && (
+                      <td className="px-6 py-4 text-right space-x-2">
+                        <button 
+                          onClick={() => openModal(vehiculo)}
+                          className="text-blue-500 hover:text-blue-400 p-2 hover:bg-blue-500/10 rounded-md transition-colors"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(vehiculo.id)}
+                          className="text-destructive hover:text-destructive/80 p-2 hover:bg-destructive/10 rounded-md transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
