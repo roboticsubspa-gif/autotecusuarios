@@ -1,3 +1,4 @@
+
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
@@ -11,6 +12,7 @@ import { NuevoReporte } from './pages/NuevoReporte';
 import { Dashboard } from './pages/Dashboard';
 import { Cotizaciones } from './pages/Cotizaciones';
 import { Usuarios } from './pages/Usuarios';
+import { BuscarPatente } from './pages/BuscarPatente';
 
 // Componente para proteger rutas
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) => {
@@ -71,6 +73,9 @@ function App() {
             } />
             <Route path="/usuarios" element={
               <ProtectedRoute allowedRoles={['administrador']}><Usuarios /></ProtectedRoute>
+            } />
+            <Route path="/buscar-patente" element={
+              <ProtectedRoute allowedRoles={['administrador', 'operario']}><BuscarPatente /></ProtectedRoute>
             } />
           </Route>
         </Routes>
