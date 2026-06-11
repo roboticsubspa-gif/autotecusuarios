@@ -5,19 +5,19 @@ const styles = StyleSheet.create({
   page: { padding: 45, fontFamily: 'Helvetica', backgroundColor: '#ffffff' },
   
   // Encabezado corporativo
-  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25, borderBottomWidth: 2, borderBottomColor: '#2563eb', paddingBottom: 15 },
-  brandTitle: { fontSize: 20, fontWeight: 'bold', color: '#1e3a8a' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25, borderBottomWidth: 2, borderBottomColor: '#1e293b', paddingBottom: 15 },
+  brandTitle: { fontSize: 22, fontWeight: 'bold', color: '#ca8a04' },
   brandSubtitle: { fontSize: 9, color: '#64748b', marginTop: 3 },
   brandInfo: { fontSize: 8, color: '#64748b', marginTop: 2 },
   docTypeContainer: { alignItems: 'flex-end' },
   docTitle: { fontSize: 13, fontWeight: 'bold', color: '#0f172a', textTransform: 'uppercase', tracking: 0.5 },
   docMeta: { fontSize: 8.5, color: '#64748b', marginTop: 3 },
-  docId: { fontSize: 10, fontWeight: 'bold', color: '#2563eb', marginTop: 3 },
+  docId: { fontSize: 10, fontWeight: 'bold', color: '#0f172a', marginTop: 3 },
 
   // Contenedor de Fichas (Cliente y Vehículo)
   cardsContainer: { flexDirection: 'row', gap: 15, marginBottom: 20 },
   card: { flex: 1, borderStyle: 'solid', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 6, padding: 12, backgroundColor: '#f8fafc' },
-  cardHeader: { fontSize: 9, fontWeight: 'bold', color: '#1e3a8a', borderBottomWidth: 1, borderBottomColor: '#cbd5e1', paddingBottom: 4, marginBottom: 8, textTransform: 'uppercase' },
+  cardHeader: { fontSize: 9, fontWeight: 'bold', color: '#0f172a', borderBottomWidth: 1, borderBottomColor: '#cbd5e1', paddingBottom: 4, marginBottom: 8, textTransform: 'uppercase' },
   
   // Filas en grilla
   gridRow: { flexDirection: 'row', marginBottom: 4 },
@@ -25,14 +25,14 @@ const styles = StyleSheet.create({
   gridValue: { flex: 1, fontSize: 8, color: '#1f2937' },
   
   // Título de Sección General
-  sectionTitle: { fontSize: 9.5, fontWeight: 'bold', color: '#1e3a8a', borderLeftWidth: 3, borderLeftColor: '#2563eb', paddingLeft: 6, marginBottom: 8, textTransform: 'uppercase' },
+  sectionTitle: { fontSize: 9.5, fontWeight: 'bold', color: '#0f172a', borderLeftWidth: 3, borderLeftColor: '#ca8a04', paddingLeft: 6, marginBottom: 8, textTransform: 'uppercase' },
   
   // Cuadros de texto para observaciones y descripciones
   textBox: { backgroundColor: '#f8fafc', borderStyle: 'solid', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 6, padding: 12, marginBottom: 20 },
   textParagraph: { fontSize: 8.5, color: '#334155', lineHeight: 1.4 },
 
   // Estilos de Tablas de Insumos/Repuestos
-  tableHeader: { flexDirection: 'row', backgroundColor: '#1e3a8a', borderRadius: 4, padding: 6, marginBottom: 2 },
+  tableHeader: { flexDirection: 'row', backgroundColor: '#1e293b', borderRadius: 4, padding: 6, marginBottom: 2 },
   tableRowEven: { flexDirection: 'row', padding: 6, borderBottomWidth: 1, borderBottomColor: '#f1f5f9', backgroundColor: '#ffffff' },
   tableRowOdd: { flexDirection: 'row', padding: 6, borderBottomWidth: 1, borderBottomColor: '#f1f5f9', backgroundColor: '#f8fafc' },
   
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
   totalLabel: { fontSize: 8.5, color: '#64748b' },
   totalValue: { fontSize: 8.5, color: '#1f2937', fontWeight: 'bold' },
   grandTotalRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#e2e8f0', paddingTop: 6, marginTop: 4 },
-  grandTotalLabel: { fontSize: 10, fontWeight: 'bold', color: '#1e3a8a' },
-  grandTotalValue: { fontSize: 11, fontWeight: 'bold', color: '#2563eb' },
+  grandTotalLabel: { fontSize: 10, fontWeight: 'bold', color: '#0f172a' },
+  grandTotalValue: { fontSize: 11, fontWeight: 'bold', color: '#0f172a' },
 
   // Firmas de Conformidad
   signaturesContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 40, gap: 50 },
@@ -267,7 +267,7 @@ export const OrdenTrabajoPDF = ({ orden }: { orden: any }) => (
 
       {/* Condiciones */}
       <View style={{ marginTop: 15, padding: 10, backgroundColor: '#f8fafc', borderStyle: 'solid', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 6 }}>
-        <Text style={{ fontSize: 7.5, fontWeight: 'bold', color: '#1e3a8a', marginBottom: 4, textTransform: 'uppercase' }}>Términos del Servicio de Recepción</Text>
+        <Text style={{ fontSize: 7.5, fontWeight: 'bold', color: '#0f172a', marginBottom: 4, textTransform: 'uppercase' }}>Términos del Servicio de Recepción</Text>
         <Text style={{ fontSize: 6.5, color: '#64748b', lineHeight: 1.3 }}>
           1. El taller no responderá por accesorios removibles u objetos de valor que no hayan sido declarados.
           2. Todo trabajo adicional requerido que no conste en esta orden será avisado previamente para autorización.
