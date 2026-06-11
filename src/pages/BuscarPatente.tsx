@@ -3,6 +3,7 @@ import {
   Search, Copy, ExternalLink, ClipboardCheck, 
   Check, AlertTriangle, Car, Fuel 
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface VehicleData {
   plate: string;
@@ -67,6 +68,29 @@ export const BuscarPatente = () => {
     setVehicle(null);
 
     try {
+      // 1. Intentamos consultar a través de la función del servidor en Supabase (RPC) para evitar bloqueos de CORS del navegador
+      const { data: resData, error: rpcError } = await supabase.rpc('buscar_patente_chile', { 
+        patente_search: patente 
+      });
+
+      if (!rpcError && resData) {
+        if (resData.status === 'error') {
+          throw new Error(resData.message || 'Error en la consulta del servidor');
+        }
+
+        if (resData.vehicle_data && resData.vehicle_data.status === 'success' && resData.vehicle_data.data) {
+          setVehicle(resData.vehicle_data.data);
+          setLoading(false);
+          return;
+        } else {
+          setError('No se encontraron datos técnicos para esta patente. Puedes intentar en los portales externos.');
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 2. Si el RPC falla o no está creado en la base de datos, hacemos fallback a consulta directa
+      console.warn('RPC no disponible, intentando conexión directa:', rpcError);
       const response = await fetch(`https://api.autoriesgo.cl/api/v1/report/lookup?patente=${patente}`);
       
       if (response.status === 429) {
@@ -85,16 +109,16 @@ export const BuscarPatente = () => {
         throw new Error('No se pudo obtener la información.');
       }
 
-      const resData = await response.json();
+      const directData = await response.json();
       
-      if (resData.vehicle_data && resData.vehicle_data.status === 'success' && resData.vehicle_data.data) {
-        setVehicle(resData.vehicle_data.data);
+      if (directData.vehicle_data && directData.vehicle_data.status === 'success' && directData.vehicle_data.data) {
+        setVehicle(directData.vehicle_data.data);
       } else {
         setError('No se encontraron datos técnicos para esta patente. Puedes intentar en los portales externos.');
       }
     } catch (err) {
       console.error(err);
-      setError('Ocurrió un problema al conectar con el buscador. Intenta nuevamente o usa los portales externos.');
+      setError('No se pudo conectar de forma automática (CORS del navegador). Para activar la búsqueda directa desde tu app, ingresa al panel de Supabase y ejecuta el script de configuración en la consola SQL.');
     } finally {
       setLoading(false);
     }
