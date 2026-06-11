@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, Edit2, Trash2, Search } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Cliente {
   id: string;
@@ -11,6 +12,7 @@ interface Cliente {
 }
 
 export const Clientes = () => {
+  const { profile } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -41,6 +43,24 @@ export const Clientes = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.nombre.trim()) {
+      alert('El nombre completo es obligatorio.');
+      return;
+    }
+    if (!formData.rut.trim()) {
+      alert('El RUT es obligatorio.');
+      return;
+    }
+    if (!formData.correo.trim()) {
+      alert('El correo electrónico es obligatorio.');
+      return;
+    }
+    if (!formData.telefono.trim()) {
+      alert('El teléfono es obligatorio.');
+      return;
+    }
+
     let error;
     if (editingId) {
       const { error: err } = await supabase.from('clientes').update(formData).eq('id', editingId);
@@ -117,7 +137,7 @@ export const Clientes = () => {
                 <th className="px-6 py-4 font-semibold">RUT</th>
                 <th className="px-6 py-4 font-semibold">Correo</th>
                 <th className="px-6 py-4 font-semibold">Teléfono</th>
-                <th className="px-6 py-4 font-semibold text-right">Acciones</th>
+                {profile?.rol !== 'tecnico' && <th className="px-6 py-4 font-semibold text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -132,20 +152,22 @@ export const Clientes = () => {
                     <td className="px-6 py-4">{cliente.rut}</td>
                     <td className="px-6 py-4 text-muted-foreground">{cliente.correo}</td>
                     <td className="px-6 py-4">{cliente.telefono}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      <button 
-                        onClick={() => openModal(cliente)}
-                        className="text-blue-500 hover:text-blue-400 p-2 hover:bg-blue-500/10 rounded-md transition-colors"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(cliente.id)}
-                        className="text-destructive hover:text-destructive/80 p-2 hover:bg-destructive/10 rounded-md transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
+                    {profile?.rol !== 'tecnico' && (
+                      <td className="px-6 py-4 text-right space-x-2">
+                        <button 
+                          onClick={() => openModal(cliente)}
+                          className="text-blue-500 hover:text-blue-400 p-2 hover:bg-blue-500/10 rounded-md transition-colors"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(cliente.id)}
+                          className="text-destructive hover:text-destructive/80 p-2 hover:bg-destructive/10 rounded-md transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -189,4 +211,3 @@ export const Clientes = () => {
     </div>
   );
 };
-
