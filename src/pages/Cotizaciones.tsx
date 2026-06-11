@@ -34,6 +34,7 @@ export const Cotizaciones = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [searchCliente, setSearchCliente] = useState('');
+  const [showClienteDropdown, setShowClienteDropdown] = useState(false);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,6 +124,10 @@ export const Cotizaciones = () => {
         descripcion: cot.descripcion,
         total: cot.total.toString()
       });
+      const cli = clientesList.find(c => c.id === cot.cliente_id);
+      if (cli) {
+        setSearchCliente(cli.nombre);
+      }
     } else {
       setEditingId(null);
       setFormData({ cliente_id: '', vehiculo_id: '', descripcion: '', total: '0' });
@@ -254,29 +259,43 @@ export const Cotizaciones = () => {
               <h2 className="text-xl font-bold">{editingId ? 'Editar Cotización' : 'Nueva Cotización'}</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium mb-1">Cliente</label>
-                <div className="space-y-2">
+                <div className="relative">
                   <input 
                     type="text" 
-                    placeholder="Buscar cliente por nombre..." 
+                    placeholder="Buscar y seleccionar cliente..." 
                     value={searchCliente}
-                    onChange={e => setSearchCliente(e.target.value)}
-                    className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                    onChange={e => {
+                      setSearchCliente(e.target.value);
+                      setShowClienteDropdown(true);
+                    }}
+                    onFocus={() => setShowClienteDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowClienteDropdown(false), 200)}
+                    className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
                   />
-                  <select 
-                    required
-                    value={formData.cliente_id} 
-                    onChange={e => setFormData({...formData, cliente_id: e.target.value, vehiculo_id: ''})} 
-                    className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="" disabled>Seleccione un cliente</option>
-                    {clientesList
-                      .filter(c => c.nombre.toLowerCase().includes(searchCliente.toLowerCase()))
-                      .map(c => (
-                        <option key={c.id} value={c.id}>{c.nombre}</option>
-                      ))}
-                  </select>
+                  {showClienteDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      {clientesList
+                        .filter(c => c.nombre.toLowerCase().includes(searchCliente.toLowerCase()))
+                        .map(c => (
+                          <div 
+                            key={c.id}
+                            onClick={() => {
+                              setFormData({...formData, cliente_id: c.id, vehiculo_id: ''});
+                              setSearchCliente(c.nombre);
+                              setShowClienteDropdown(false);
+                            }}
+                            className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          >
+                            {c.nombre}
+                          </div>
+                        ))}
+                      {clientesList.filter(c => c.nombre.toLowerCase().includes(searchCliente.toLowerCase())).length === 0 && (
+                        <div className="px-3 py-2 text-muted-foreground text-sm">No se encontraron resultados</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
