@@ -1,3 +1,4 @@
+
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
@@ -67,15 +68,15 @@ function App() {
             <Route path="/reportes/nuevo" element={
               <ProtectedRoute allowedRoles={['administrador', 'tecnico', 'operario']}><NuevoReporte /></ProtectedRoute>
             } />
-            <Route path="/cotizaciones" element={
-              <ProtectedRoute allowedRoles={['administrador', 'operario']}><Cotizaciones /></ProtectedRoute>
-            } />
-            <Route path="/usuarios" element={
-              <ProtectedRoute allowedRoles={['administrador']}><Usuarios /></ProtectedRoute>
-            } />
-            <Route path="/buscar-patente" element={
-              <ProtectedRoute allowedRoles={['administrador', 'operario']}><BuscarPatente /></ProtectedRoute>
-            } />
+             <Route path="/cotizaciones" element={
+               <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><Cotizaciones /></ProtectedRoute>
+             } />
+             <Route path="/usuarios" element={
+               <ProtectedRoute allowedRoles={['administrador']}><Usuarios /></ProtectedRoute>
+             } />
+             <Route path="/buscar-patente" element={
+               <ProtectedRoute allowedRoles={['administrador', 'operario', 'tecnico']}><BuscarPatente /></ProtectedRoute>
+             } />
           </Route>
         </Routes>
       </Router>
