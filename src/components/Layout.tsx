@@ -12,7 +12,8 @@ import {
   ClipboardCheck,
   Menu,
   X,
-  UserCog
+  UserCog,
+  Search
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -29,6 +30,7 @@ const Sidebar = ({ isOpen, onClose, signOut }: SidebarProps) => {
     { name: 'Dashboard', path: '/', icon: Home, roles: ['administrador', 'operario'] },
     { name: 'Clientes', path: '/clientes', icon: Users, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Vehículos', path: '/vehiculos', icon: Car, roles: ['administrador', 'operario', 'tecnico'] },
+    { name: 'Buscar Patente', path: '/buscar-patente', icon: Search, roles: ['administrador', 'operario'] },
     { name: 'Órdenes de Trabajo', path: '/ordenes', icon: Wrench, roles: ['administrador', 'operario', 'tecnico'] },
     { name: 'Reportes', path: '/reportes', icon: ClipboardCheck, roles: ['administrador', 'tecnico', 'operario'] },
     { name: 'Inventario', path: '/inventario', icon: Package, roles: ['administrador', 'operario'] },
