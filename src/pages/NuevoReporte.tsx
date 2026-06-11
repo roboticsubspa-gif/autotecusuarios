@@ -17,6 +17,8 @@ export const NuevoReporte = () => {
 
   const [insumosUsados, setInsumosUsados] = useState<{inventario_id: string, cantidad: number, precio_unitario: number, nombre: string}[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchOT, setSearchOT] = useState('');
+  const [searchInsumo, setSearchInsumo] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,18 +88,22 @@ export const NuevoReporte = () => {
     const insumo = newInsumos[index];
     
     if (field === 'cantidad') {
+      const intValue = Math.round(value);
       const item = inventario.find(i => i.id === insumo.inventario_id);
-      if (item && value > item.stock) {
+      if (item && intValue > item.stock) {
         alert(`Stock insuficiente. Solo quedan ${item.stock} unidades de "${item.nombre}".`);
         (newInsumos[index] as any).cantidad = item.stock;
         setInsumosUsados(newInsumos);
         return;
       }
-      if (value < 0.1) {
-        (newInsumos[index] as any).cantidad = 0.1;
+      if (intValue < 1) {
+        (newInsumos[index] as any).cantidad = 1;
         setInsumosUsados(newInsumos);
         return;
       }
+      (newInsumos[index] as any).cantidad = intValue;
+      setInsumosUsados(newInsumos);
+      return;
     }
 
     (newInsumos[index] as any)[field] = value;
@@ -210,17 +216,32 @@ export const NuevoReporte = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-1">Orden de Trabajo Asociada</label>
-              <select 
-                required
-                value={formData.orden_id} 
-                onChange={e => setFormData({...formData, orden_id: e.target.value})} 
-                className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="" disabled>Seleccione una OT Activa</option>
-                {ordenes.map(o => (
-                  <option key={o.id} value={o.id}>OT-{o.numero_secuencial} / {o.vehiculos?.patente}</option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <input 
+                  type="text" 
+                  placeholder="Buscar OT por Nº o patente..." 
+                  value={searchOT}
+                  onChange={e => setSearchOT(e.target.value)}
+                  className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                />
+                <select 
+                  required
+                  value={formData.orden_id} 
+                  onChange={e => setFormData({...formData, orden_id: e.target.value})} 
+                  className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="" disabled>Seleccione una OT Activa</option>
+                  {ordenes
+                    .filter(o => 
+                      `ot-${o.numero_secuencial}`.includes(searchOT.toLowerCase()) || 
+                      o.numero_secuencial?.toString().includes(searchOT) || 
+                      o.vehiculos?.patente?.toLowerCase().includes(searchOT.toLowerCase())
+                    )
+                    .map(o => (
+                      <option key={o.id} value={o.id}>OT-{o.numero_secuencial} / {o.vehiculos?.patente.toUpperCase()}</option>
+                    ))}
+                </select>
+              </div>
               {dbError && (
                 <p className="text-red-500 text-xs mt-2 font-medium">Error de base de datos: {dbError}</p>
               )}
@@ -254,18 +275,32 @@ export const NuevoReporte = () => {
 
         {/* Insumos */}
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex justify-between items-center border-b border-border pb-2">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-border pb-2 gap-3">
             <h2 className="text-lg font-semibold">Insumos y Repuestos Utilizados</h2>
-            <select 
-              onChange={handleAddInsumo}
-              className="px-3 py-1.5 text-sm bg-primary/10 text-primary border border-primary/20 rounded-md focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
-              defaultValue=""
-            >
-              <option value="" disabled>+ Agregar Insumo</option>
-              {inventario.map(i => (
-                <option key={i.id} value={i.id}>{i.nombre} (Stock: {i.stock})</option>
-              ))}
-            </select>
+            <div className="flex flex-wrap gap-2 items-center">
+              <input 
+                type="text" 
+                placeholder="Buscar insumo..." 
+                value={searchInsumo}
+                onChange={e => setSearchInsumo(e.target.value)}
+                className="px-3 py-1 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+              />
+              <select 
+                onChange={handleAddInsumo}
+                className="px-3 py-1.5 text-sm bg-primary/10 text-primary border border-primary/20 rounded-md focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+                defaultValue=""
+              >
+                <option value="" disabled>+ Agregar Insumo</option>
+                {inventario
+                  .filter(i => 
+                    i.nombre.toLowerCase().includes(searchInsumo.toLowerCase()) || 
+                    (i.codigo && i.codigo.toLowerCase().includes(searchInsumo.toLowerCase()))
+                  )
+                  .map(i => (
+                    <option key={i.id} value={i.id}>{i.nombre} (Stock: {Math.round(i.stock)})</option>
+                  ))}
+              </select>
+            </div>
           </div>
 
           {insumosUsados.length === 0 ? (
@@ -277,11 +312,11 @@ export const NuevoReporte = () => {
                   <div className="flex-1 font-medium">{insumo.nombre}</div>
                   <div className="w-28">
                     <label className="text-xs text-muted-foreground block mb-1">
-                      Cant. (Máx {inventario.find(i => i.id === insumo.inventario_id)?.stock || 0})
+                      Cant. (Máx {Math.round(inventario.find(i => i.id === insumo.inventario_id)?.stock || 0)})
                     </label>
                     <input 
-                      type="number" min="0.1" step="0.5"
-                      max={inventario.find(i => i.id === insumo.inventario_id)?.stock || 1}
+                      type="number" min="1" step="1"
+                      max={Math.round(inventario.find(i => i.id === insumo.inventario_id)?.stock || 1)}
                       value={insumo.cantidad}
                       onChange={e => updateInsumo(idx, 'cantidad', Number(e.target.value))}
                       className="w-full px-2 py-1 bg-background border border-border rounded focus:outline-none"
