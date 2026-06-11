@@ -34,6 +34,7 @@ export const OrdenesTrabajo = () => {
   const [vehiculosList, setVehiculosList] = useState<Vehiculo[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [searchVehiculo, setSearchVehiculo] = useState('');
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -120,6 +121,7 @@ export const OrdenesTrabajo = () => {
   };
 
   const openModal = (orden?: OrdenTrabajo) => {
+    setSearchVehiculo('');
     if (orden) {
       setEditingId(orden.id);
       setFormData({ 
@@ -402,17 +404,31 @@ export const OrdenesTrabajo = () => {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Vehículo</label>
-                <select 
-                  required
-                  value={formData.vehiculo_id} 
-                  onChange={e => setFormData({...formData, vehiculo_id: e.target.value})} 
-                  className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="" disabled>Seleccione un vehículo</option>
-                  {vehiculosList.map(v => (
-                    <option key={v.id} value={v.id}>{v.patente.toUpperCase()} - {v.clientes?.nombre}</option>
-                  ))}
-                </select>
+                <div className="space-y-2">
+                  <input 
+                    type="text" 
+                    placeholder="Buscar vehículo por patente o cliente..." 
+                    value={searchVehiculo}
+                    onChange={e => setSearchVehiculo(e.target.value)}
+                    className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-muted-foreground"
+                  />
+                  <select 
+                    required
+                    value={formData.vehiculo_id} 
+                    onChange={e => setFormData({...formData, vehiculo_id: e.target.value})} 
+                    className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="" disabled>Seleccione un vehículo</option>
+                    {vehiculosList
+                      .filter(v => 
+                        v.patente.toLowerCase().includes(searchVehiculo.toLowerCase()) || 
+                        v.clientes?.nombre?.toLowerCase().includes(searchVehiculo.toLowerCase())
+                      )
+                      .map(v => (
+                        <option key={v.id} value={v.id}>{v.patente.toUpperCase()} - {v.clientes?.nombre}</option>
+                      ))}
+                  </select>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Estado</label>
