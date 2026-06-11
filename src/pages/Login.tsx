@@ -39,7 +39,7 @@ export const Login = () => {
           <div className="bg-primary/10 p-4 rounded-full mb-4">
             <Car size={40} className="text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Egaña Automotriz</h1>
+          <h1 className="text-3xl font-bold text-white tracking-tight">Serviteca Egaña</h1>
           <p className="text-zinc-400 mt-2">Inicia sesión en tu cuenta para continuar</p>
         </div>
 
