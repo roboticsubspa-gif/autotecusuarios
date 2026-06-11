@@ -78,6 +78,13 @@ export const BuscarPatente = () => {
           throw new Error(resData.message || 'Error en la consulta del servidor');
         }
 
+        // Si el servidor del bot retornó una limitación de tasa (Rate Limit)
+        if (resData.detail && resData.detail.toLowerCase().includes('rate limit')) {
+          setError('Límite de consultas del bot alcanzado (máximo 1 por minuto). Por favor, espera 60 segundos o utiliza los portales externos de abajo.');
+          setLoading(false);
+          return;
+        }
+
         if (resData.vehicle_data && resData.vehicle_data.status === 'success' && resData.vehicle_data.data) {
           setVehicle(resData.vehicle_data.data);
           setLoading(false);
