@@ -76,9 +76,9 @@ export const CotizacionPDF = ({ cotizacion }: { cotizacion: any }) => (
       {/* Encabezado */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.brandTitle}>EGAÑA AUTOMOTRIZ</Text>
+          <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
           <Text style={styles.brandSubtitle}>Servicio Mecánico Profesional e Integral</Text>
-          <Text style={styles.brandInfo}>Copiapó, Chile | Contacto: taller@egana.cl</Text>
+          <Text style={styles.brandInfo}>Puerto Montt, Chile | Contacto: taller@egana.cl</Text>
         </View>
         <View style={styles.docTypeContainer}>
           <Text style={styles.docTitle}>COTIZACIÓN</Text>
@@ -160,7 +160,7 @@ export const CotizacionPDF = ({ cotizacion }: { cotizacion: any }) => (
       <View style={styles.signaturesContainer}>
         <View style={styles.signatureBox}>
           <Text style={styles.signatureText}>Firma Responsable Taller</Text>
-          <Text style={styles.signatureTitle}>Egaña Automotriz</Text>
+          <Text style={styles.signatureTitle}>Serviteca Egaña</Text>
         </View>
         <View style={styles.signatureBox}>
           <Text style={styles.signatureText}>Firma Aceptación Presupuesto</Text>
@@ -170,7 +170,7 @@ export const CotizacionPDF = ({ cotizacion }: { cotizacion: any }) => (
 
       {/* Footer */}
       <Text style={styles.footer}>
-        Esta cotización tiene una validez de 15 días desde la fecha de emisión. Valores incluyen IVA. Egaña Automotriz.
+        Esta cotización tiene una validez de 15 días desde la fecha de emisión. Valores incluyen IVA. Serviteca Egaña.
       </Text>
     </Page>
   </Document>
@@ -183,9 +183,9 @@ export const OrdenTrabajoPDF = ({ orden }: { orden: any }) => (
       {/* Encabezado */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.brandTitle}>EGAÑA AUTOMOTRIZ</Text>
+          <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
           <Text style={styles.brandSubtitle}>Servicio Mecánico Profesional e Integral</Text>
-          <Text style={styles.brandInfo}>Copiapó, Chile | Fono: +56 9 1234 5678</Text>
+          <Text style={styles.brandInfo}>Puerto Montt, Chile | Fono: +56 9 1234 5678</Text>
         </View>
         <View style={styles.docTypeContainer}>
           <Text style={styles.docTitle}>ORDEN DE TRABAJO (OT)</Text>
@@ -255,6 +255,16 @@ export const OrdenTrabajoPDF = ({ orden }: { orden: any }) => (
         </View>
       </View>
 
+      {/* Observaciones de Recepción (Detalles previos del vehículo) */}
+      {orden.observaciones && (
+        <View style={{ marginBottom: 15 }}>
+          <Text style={styles.sectionTitle}>Observaciones / Detalles Previos del Vehículo</Text>
+          <View style={styles.textBox}>
+            <Text style={styles.textParagraph}>{orden.observaciones}</Text>
+          </View>
+        </View>
+      )}
+
       {/* Condiciones */}
       <View style={{ marginTop: 15, padding: 10, backgroundColor: '#f8fafc', borderStyle: 'solid', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 6 }}>
         <Text style={{ fontSize: 7.5, fontWeight: 'bold', color: '#1e3a8a', marginBottom: 4, textTransform: 'uppercase' }}>Términos del Servicio de Recepción</Text>
@@ -269,7 +279,7 @@ export const OrdenTrabajoPDF = ({ orden }: { orden: any }) => (
       <View style={styles.signaturesContainer}>
         <View style={styles.signatureBox}>
           <Text style={styles.signatureText}>Firma Recepción Taller</Text>
-          <Text style={styles.signatureTitle}>Egaña Automotriz</Text>
+          <Text style={styles.signatureTitle}>Serviteca Egaña</Text>
         </View>
         <View style={styles.signatureBox}>
           <Text style={styles.signatureText}>Firma Autorización Cliente</Text>
@@ -279,7 +289,7 @@ export const OrdenTrabajoPDF = ({ orden }: { orden: any }) => (
 
       {/* Footer */}
       <Text style={styles.footer}>
-        Documento de control de ingreso y recepción de vehículo. Egaña Automotriz.
+        Documento de control de ingreso y recepción de vehículo. Serviteca Egaña.
       </Text>
     </Page>
   </Document>
@@ -296,9 +306,9 @@ export const ReporteTrabajoPDF = ({ reporte }: { reporte: any }) => {
         {/* Encabezado */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.brandTitle}>EGAÑA AUTOMOTRIZ</Text>
+            <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
             <Text style={styles.brandSubtitle}>Servicio Mecánico Profesional e Integral</Text>
-            <Text style={styles.brandInfo}>Copiapó, Chile | Fono: +56 9 1234 5678</Text>
+            <Text style={styles.brandInfo}>Puerto Montt, Chile | Fono: +56 9 1234 5678</Text>
           </View>
           <View style={styles.docTypeContainer}>
             <Text style={styles.docTitle}>REPORTE DE TRABAJO (RT)</Text>
@@ -411,7 +421,7 @@ export const ReporteTrabajoPDF = ({ reporte }: { reporte: any }) => {
         <View style={styles.signaturesContainer}>
           <View style={styles.signatureBox}>
             <Text style={styles.signatureText}>Firma Mecánico Ejecutor</Text>
-            <Text style={styles.signatureTitle}>Egaña Automotriz</Text>
+            <Text style={styles.signatureTitle}>Serviteca Egaña</Text>
           </View>
           <View style={styles.signatureBox}>
             <Text style={styles.signatureText}>Firma Recepción Conforme</Text>
@@ -421,7 +431,7 @@ export const ReporteTrabajoPDF = ({ reporte }: { reporte: any }) => {
 
         {/* Footer */}
         <Text style={styles.footer}>
-          Documento que certifica la entrega del vehículo conforme a los trabajos señalados. Egaña Automotriz.
+          Documento que certifica la entrega del vehículo conforme a los trabajos señalados. Serviteca Egaña.
         </Text>
       </Page>
     </Document>
@@ -437,7 +447,7 @@ export const ListaCotizacionesPDF = ({ list }: { list: any[] }) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.brandTitle}>AUTOTEC</Text>
+            <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
             <Text style={styles.brandSubtitle}>Reporte Consolidado de Cotizaciones Emitidas</Text>
           </View>
           <View style={styles.docTypeContainer}>
@@ -475,7 +485,7 @@ export const ListaCotizacionesPDF = ({ list }: { list: any[] }) => {
           </View>
         </View>
 
-        <Text style={styles.footer}>Reporte Consolidado de Cotizaciones. AutoTec.</Text>
+        <Text style={styles.footer}>Reporte Consolidado de Cotizaciones. Serviteca Egaña.</Text>
       </Page>
     </Document>
   );
@@ -492,7 +502,7 @@ export const ListaOrdenesTrabajoPDF = ({ list }: { list: any[] }) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.brandTitle}>AUTOTEC</Text>
+            <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
             <Text style={styles.brandSubtitle}>Reporte Consolidado de Órdenes de Trabajo</Text>
           </View>
           <View style={styles.docTypeContainer}>
@@ -525,7 +535,7 @@ export const ListaOrdenesTrabajoPDF = ({ list }: { list: any[] }) => {
           );
         })}
 
-        <Text style={styles.footer}>Reporte Consolidado de Órdenes de Trabajo. AutoTec.</Text>
+        <Text style={styles.footer}>Reporte Consolidado de Órdenes de Trabajo. Serviteca Egaña.</Text>
       </Page>
     </Document>
   );
@@ -542,7 +552,7 @@ export const ListaReportesTrabajoPDF = ({ list }: { list: any[] }) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.brandTitle}>AUTOTEC</Text>
+            <Text style={styles.brandTitle}>SERVITECA EGAÑA</Text>
             <Text style={styles.brandSubtitle}>Consolidado de Ingresos y Ganancias de Trabajos</Text>
           </View>
           <View style={styles.docTypeContainer}>
@@ -592,7 +602,7 @@ export const ListaReportesTrabajoPDF = ({ list }: { list: any[] }) => {
           </View>
         </View>
 
-        <Text style={styles.footer}>Reporte Financiero y Consolidado de Ganancias. AutoTec.</Text>
+        <Text style={styles.footer}>Reporte Financiero y Consolidado de Ganancias. Serviteca Egaña.</Text>
       </Page>
     </Document>
   );
